@@ -2,30 +2,61 @@ import 'package:flutter/material.dart';
 import '../services/storage_service.dart';
 import 'package:super_project/models/storage_item.dart';
 
+class Item {
+  const Item(this.name, this.icon);
+
+  final String name;
+
+  final Icon icon;
+}
+
 class PassManager extends StatefulWidget {
   // const PassManager({Key? key}) : super(key: key);
-  StorageService obj1 = StorageService();
 
   @override
   State<PassManager> createState() => _PassManagerState();
 }
 
 class _PassManagerState extends State<PassManager> {
-  bool _passwordVisible = false;
   List<PassEntry> passes = [];
-  //   PassEntry(
-  //       id: 2,
-  //       userName: "vijay",
-  //       website: "youtube.com",
-  //       password: "vijay@12888888888888883"),
-  //   PassEntry(
-  //       id: 3,
-  //       userName: "Boruto4life",
-  //       website: "git.ardhika.com",
-  //       password: "1234567"),
-  // ];
   StorageService storageSer = StorageService();
-  // storageSer.readAllSecureData().then((resp) => print(resp));
+  String dropdownValue = 'Dog';
+  List users = [
+    const Item(
+        'Android',
+        Icon(
+          Icons.android,
+          color: const Color(0xFF167F67),
+        )),
+    const Item(
+        'Flutter',
+        Icon(
+          Icons.flag,
+          color: const Color(0xFF167F67),
+        )),
+    const Item(
+        'ReactNative',
+        Icon(
+          Icons.format_indent_decrease,
+          color: const Color(0xFF167F67),
+        )),
+    const Item(
+        'iOS',
+        Icon(
+          Icons.mobile_screen_share,
+          color: const Color(0xFF167F67),
+        )),
+  ];
+
+  void dropDownAction(value) {
+    switch (value) {
+      case '1':
+        {
+          storageSer.deleteAllPass();
+          Navigator.of(context).pop();
+        }
+    }
+  }
 
   void getEntries() {
     storageSer.readAllPass().then((value) {
@@ -87,132 +118,142 @@ class _PassManagerState extends State<PassManager> {
 
   @override
   Widget build(BuildContext context) {
-    void addPass(PassEntry p) {
-      setState(() {
-        passes.add(p);
-      });
-    }
 
     return Scaffold(
       body: Scaffold(
         appBar: AppBar(
           title: Text('Password Manager'),
-          centerTitle: true,
-        ),
-        body: Container(
-            // child: Column(
-            //   crossAxisAlignment: CrossAxisAlignment.stretch,
-            //   children: [
-            //     ListPass(id: 2, userName: "vijay", website: "youtube.com", password: "vijay@123"),
-            //     ListPass(id: 3, userName: "Boruto4life", website: "git.ardhika.com", password: "1234567"),
-            //   ],
-            // ),
-            child: Column(
-          children: [
-            DataTable(
-              clipBehavior: Clip.antiAlias,
-              columns: [
-                DataColumn(label: Text('Name')),
-                DataColumn(label: Text('Website')),
-                DataColumn(label: Text('Password'))
-              ],
-              rows: () {
-                return passes
-                    .map((p) => DataRow(cells: [
-                          DataCell(Text(p.userName)),
-                          DataCell(Text(p.website)),
-                          DataCell(Row(
-                            children: [
-                              () {
-                                if (p._passwordVisible) {
-                                  return FittedBox(
-                                      child: Text(
-                                    p.password,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                  ));
-                                } else {
-                                  return Text("********");
-                                }
-                              }(),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      p._passwordVisible = !p._passwordVisible;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    p._passwordVisible
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                    size: 18,
-                                  )),
-                              IconButton(
-                                  onPressed: () {
-                                    deletePass(p);
-                                  },
-                                  icon: Icon(
-                                    Icons.delete,
-                                    color: Colors.red,
-                                    size: 18,
-                                  ))
-                            ],
-                          ))
-                        ]))
-                    .toList();
-                //     [
-                //   DataRow(cells: [
-                //     DataCell(Text("Boruto4life")),
-                //     DataCell(Text("git.ardhika.com")),
-                //     DataCell(Row(
-                //       children: [
-                //         () {
-                //           if (_passwordVisible) {
-                //             return Text("31314141");
-                //           } else {
-                //             return Text("********");
-                //           }
-                //         }(),
-                //         SizedBox(
-                //           width: 5,
-                //         ),
-                //         IconButton(
-                //             onPressed: () {
-                //               setState(() {
-                //                 _passwordVisible = !_passwordVisible;
-                //               });
-                //             },
-                //             icon: Icon(
-                //               _passwordVisible
-                //                   ? Icons.visibility_off
-                //                   : Icons.visibility,
-                //               size: 18,
-                //             ))
-                //       ],
-                //     ))
-                //   ])
-                // ];
-              }(),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  storageSer.deleteAllSecureData();
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: PopupMenuButton<String>(
+                itemBuilder: (BuildContext context) {
+                  return <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: '1',
+                      child: Text('Delete All'),
+                    ),
+                  ];
                 },
-                child: Text('Delete All'))
+                onSelected: (String value) {
+                  setState(() {
+                    dropDownAction(value);
+                    // dropdownValue = value;
+                  });
+                },
+                child: Icon(Icons.more_vert),
+              ),
+            ),
           ],
-        )),
+          // centerTitle: true,
+        ),
+        body: Visibility(
+          visible: passes.length > 0,
+          replacement: const Center(
+            child: Text(
+              'No saved passwords',
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 24,
+                  color: Colors.grey),
+            ),
+          ),
+          child: Container(
+              child: Column(
+            children: [
+              DataTable(
+                clipBehavior: Clip.antiAlias,
+                columns: const [
+                  DataColumn(label: Text('Name')),
+                  DataColumn(label: Text('Website')),
+                  DataColumn(label: Text('Password'))
+                ],
+                rows: () {
+                  return passes
+                      .map((p) => DataRow(cells: [
+                            DataCell(Text(p.userName)),
+                            DataCell(Text(p.website)),
+                            DataCell(Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                () {
+                                  if (p._passwordVisible) {
+                                    return Expanded(
+                                        child: Text(
+                                      p.password,
+                                    ));
+                                  } else {
+                                    return Text("********");
+                                  }
+                                }(),
+                                // SizedBox(
+                                //   width: 5,
+                                // ),
+                                IconButton(
+                                    onPressed: () {
+                                      if (p.password.length > 8) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return PassForm.updater(
+                                                  getEntries, storageSer, p);
+                                            });
+                                      } else {
+                                        setState(() {
+                                          p._passwordVisible =
+                                              !p._passwordVisible;
+                                        });
+                                      }
+                                    },
+                                    icon: Icon(
+                                      p._passwordVisible
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                      size: 18,
+                                    )),
+                                SizedBox(width: 0,),
+                                Container(
+                                  width: 30,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        deletePass(p);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 18,
+                                      )),
+                                ),
+                                IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return PassForm.updater(
+                                                getEntries, storageSer, p);
+                                          });
+                                    },
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: Colors.green,
+                                      size: 18,
+                                    ))
+                              ],
+                            ))
+                          ]))
+                      .toList();
+                }(),
+              ),
+            ],
+          )),
+        ),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
-              print("open dialog");
-
               showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return PassForm(
-                        getEntries: getEntries, storageSer: storageSer);
+                    return PassForm.updater(
+                        getEntries, storageSer, PassEntry.empty());
                   });
             },
             child: Icon(Icons.add)),
@@ -220,6 +261,15 @@ class _PassManagerState extends State<PassManager> {
     );
   }
 }
+
+// void showPassDialog(ListPass p) {
+//   showDialog(
+//       context: context,
+//       builder: (BuildContext context) {
+//         return PassForm(
+//             getEntries: getEntries, storageSer: storageSer);
+//       });
+// }
 
 class ListPass extends StatefulWidget {
   // const ListPass({Key? key}) : super(key: key);
@@ -302,6 +352,20 @@ class PassEntry {
       required this.userName,
       required this.website,
       required this.password});
+
+  // PassEntry.empty() {
+  //   id = '';
+  //   userName = '';
+  //   website = '';
+  //   password = '';
+  // }
+
+  PassEntry.empty(
+      {Key? key,
+      this.id = '',
+      this.userName = '',
+      this.website = '',
+      this.password = ''});
 }
 
 class PassForm extends StatefulWidget {
@@ -309,16 +373,34 @@ class PassForm extends StatefulWidget {
 
   Function getEntries;
   StorageService storageSer;
+  PassEntry p = PassEntry.empty();
   PassForm({required this.getEntries, required this.storageSer});
+
+  PassForm.updater(this.getEntries, this.storageSer, this.p);
   @override
   State<PassForm> createState() => _PassFormState();
 }
 
 class _PassFormState extends State<PassForm> {
   final _formKey = GlobalKey<FormState>();
-  String username = '';
+  String username = 'djj';
   String website = '';
   String password = '';
+  String buttonTxt = 'Add';
+  TextEditingController _controllerUser = TextEditingController();
+  TextEditingController _controllerPass = TextEditingController();
+  TextEditingController _controllerWeb = TextEditingController();
+
+  void initState() {
+    super.initState();
+    _controllerUser = TextEditingController(text: widget.p.userName);
+    _controllerPass = TextEditingController(text: widget.p.password);
+    _controllerWeb = TextEditingController(text: widget.p.website);
+    if (widget.p.userName.length > 0) {
+      buttonTxt = 'Update';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -337,7 +419,7 @@ class _PassFormState extends State<PassForm> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Title(
                     color: Colors.orangeAccent,
-                    child: Text("Add Password",
+                    child: Text("$buttonTxt Password",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold)),
                   ),
@@ -348,6 +430,7 @@ class _PassFormState extends State<PassForm> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       TextFormField(
+                        controller: _controllerUser,
                         decoration: const InputDecoration(
                           icon: const Icon(Icons.person),
                           labelText: 'User Name',
@@ -359,10 +442,11 @@ class _PassFormState extends State<PassForm> {
                           return null;
                         },
                         onChanged: (value) {
-                          username = value;
+                          widget.p.userName = value;
                         },
                       ),
                       TextFormField(
+                        controller: _controllerWeb,
                         decoration: const InputDecoration(
                           icon: const Icon(Icons.web_rounded),
                           labelText: 'Website',
@@ -374,10 +458,11 @@ class _PassFormState extends State<PassForm> {
                           return null;
                         },
                         onChanged: (value) {
-                          website = value;
+                          widget.p.website = value;
                         },
                       ),
                       TextFormField(
+                        controller: _controllerPass,
                         decoration: const InputDecoration(
                           icon: const Icon(Icons.password),
                           labelText: 'Password',
@@ -389,7 +474,7 @@ class _PassFormState extends State<PassForm> {
                           return null;
                         },
                         onChanged: (value) {
-                          password = value;
+                          widget.p.password = value;
                         },
                       ),
                     ],
@@ -416,8 +501,11 @@ class _PassFormState extends State<PassForm> {
                               const SnackBar(content: Text('Processing Data')),
                             );
 
-                            StorageItem pay =
-                                StorageItem(username, password, website);
+                            StorageItem pay = StorageItem.update(
+                                widget.p.id,
+                                widget.p.userName,
+                                widget.p.password,
+                                widget.p.website);
                             widget.storageSer.writePass(pay);
                             widget.getEntries();
                             // widget.addPass(PassEntry(
@@ -430,7 +518,7 @@ class _PassFormState extends State<PassForm> {
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green[500]),
-                        child: Text("Add"))
+                        child: Text(buttonTxt))
                   ],
                 )
               ],

@@ -6,6 +6,8 @@ class StorageItem {
 
   StorageItem(this.username, this.password, this.website);
 
+  StorageItem.update(this.id, this.username, this.password, this.website);
+
   @override
   String toString() {
     return 'user: ${username}, pass: ${password}}, web: ${website} for id: ${id}';

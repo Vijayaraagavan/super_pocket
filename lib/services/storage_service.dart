@@ -65,13 +65,19 @@ class StorageService {
   // password manager methods
 
   Future<void> writePass(StorageItem item) async {
-    generateId((id) async {
-      String passId = 'pass-${id.toString()}';
-      item.id = passId;
+    if (item.id.isEmpty) {
+      generateId((id) async {
+        String passId = 'pass-${id.toString()}';
+        item.id = passId;
+        String enc = getEncoded(item);
+        await _secureStorage.write(
+            key: passId, value: enc, aOptions: _getAndroidOptions());
+      });
+    } else {
       String enc = getEncoded(item);
       await _secureStorage.write(
-          key: passId, value: enc, aOptions: _getAndroidOptions());
-    });
+          key: item.id, value: enc, aOptions: _getAndroidOptions());
+    }
   }
 
   Future<List<StorageItem>> readAllPass() async {
@@ -115,5 +121,14 @@ class StorageService {
         StorageItem(d['username'], d['password'], d['website']);
     passObj.id = data.key;
     return passObj;
+  }
+
+  void deleteAllPass() async {
+    var allData = await _secureStorage.readAll(aOptions: _getAndroidOptions());
+    allData.entries.forEach((e) {
+      if (e.key.contains('pass-')) {
+        deleteSecureData(e.key);
+      }
+    });
   }
 }
