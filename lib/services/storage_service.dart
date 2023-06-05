@@ -15,10 +15,8 @@ class StorageService {
         encryptedSharedPreferences: true,
       );
 
-  Future<StorageItem?> readSecureData(String key) async {
-    var readData =
-        await _secureStorage.read(key: key, aOptions: _getAndroidOptions());
-    return getDecoded(readData);
+  Future<String?> readSecureData(String key) async {
+    return await _secureStorage.read(key: key, aOptions: _getAndroidOptions());
   }
 
   Future<void> deleteSecureData(String item) async {
@@ -84,7 +82,7 @@ class StorageService {
     var allData = await _secureStorage.readAll(aOptions: _getAndroidOptions());
     List<StorageItem> list = [];
     allData.entries.forEach((e) {
-      if (e.key.contains('pass')) {
+      if (e.key.contains('pass-')) {
         StorageItem pass = decodePass(e);
         list.add(pass);
       }
@@ -130,5 +128,27 @@ class StorageService {
         deleteSecureData(e.key);
       }
     });
+  }
+
+  // password manager's passcode
+
+  Future<int> validatePin(String pin) async {
+    bool present = await containsKeyInSecureData('passwordPassCode');
+
+    if (present) {
+      String? passcode = await readSecureData('passwordPassCode');
+      if (passcode!.contains(pin)) {
+        return 1;
+      } else {
+        return 2;
+      }
+    } else {
+      return 3;
+    }
+  }
+
+  void createPassPin(String pin) async {
+    _secureStorage.write(
+        key: 'passwordPassCode', value: pin, aOptions: _getAndroidOptions());
   }
 }

@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
             children: [
               Screen(
                   name: 'Password Manager',
-                  route: '/passManager',
+                  route: '/passPin',
                   color: Colors.red.shade300,
                   icon: Icon(Icons.key, color: Colors.white, size: 28)),
               Screen(
