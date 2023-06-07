@@ -16,7 +16,7 @@ class _PassPinState extends State<PassPin> {
 
   @override
   void dispose() {
-    newTextEditingController.dispose();
+    // newTextEditingController.dispose();
     focusNode.dispose();
     super.dispose();
   }
@@ -30,14 +30,13 @@ class _PassPinState extends State<PassPin> {
         title: Text('Passcode Login'),
       ),
       body: Container(
-        margin:EdgeInsets.only(left:20,right:20),
-        child:SingleChildScrollView(
-          child:Column(
+        margin: EdgeInsets.only(left: 20, right: 20),
+        child: SingleChildScrollView(
+          child: Column(
             children: <Widget>[
               SizedBox(
                 height: 30.0,
               ),
-
               SizedBox(
                 height: 80.0,
               ),
@@ -59,11 +58,12 @@ class _PassPinState extends State<PassPin> {
                 child: PinCodeFields(
                   controller: newTextEditingController,
                   length: 4,
+                  obscureCharacter: "❌", obscureText: true,
                   // fieldBorderStyle: FieldBorderStyle.Square,
                   responsive: false,
-                  fieldHeight:40.0,
+                  fieldHeight: 40.0,
                   fieldWidth: 40.0,
-                  borderWidth:1.0,
+                  borderWidth: 1.0,
                   activeBorderColor: Colors.pink,
                   activeBackgroundColor: Colors.pink.shade100,
                   // borderRadius: BorderRadius.circular(10.0),
@@ -79,67 +79,66 @@ class _PassPinState extends State<PassPin> {
                     // Your logic with pin code
                     if (mode == 1) {
                       storageSer.validatePin(output).then((resp) {
-                        print('pin ver $resp');
                         if (resp == 1) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                showCloseIcon: true,
-                                content: Text("passcode verified"),
-                                backgroundColor:  Colors.green,
-                              )
-                          );
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            duration: Duration(seconds: 1),
+                            showCloseIcon: true,
+                            content: Text("passcode verified"),
+                            backgroundColor: Colors.green,
+                          ));
+                          newTextEditingController.clear();
                           Navigator.pushNamed(context, '/passManager');
                         } else if (resp == 2) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                showCloseIcon: true,
-                                content: Text("passcode mismatch"),
-                                backgroundColor: Colors.red,
-                              )
-                          );
-                          dispose();
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            duration: Duration(seconds: 1),
+                            showCloseIcon: true,
+                            content: Text("passcode mismatch"),
+                            backgroundColor: Colors.red,
+                            behavior: SnackBarBehavior.floating,
+                          ));
                         } else {
-                          print('show snack');
                           mode = 2;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                showCloseIcon: true,
-                                content: Text("No password set. Create new"),
-                                backgroundColor: Colors.red,
-                              )
-                          );
-
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            showCloseIcon: true,
+                            content: Text("No password set. Create new"),
+                            backgroundColor: Colors.red,
+                          ));
                         }
+                        newTextEditingController.clear();
                       });
                     } else {
-                      showDialog(context: context, builder: (BuildContext context) {
-                        return AlertDialog(
-                            title: Text("Confirm Password"),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  storageSer.createPassPin(output);
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text("Yes"),
-                                style:
-                                ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text("No"),
-                                style:
-                                ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                              )
-                            ],
-                            actionsPadding: EdgeInsets.only(right: 15, bottom: 10)
-                        );
-                      });
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                                title: Text("Confirm Password"),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      storageSer.createPassPin(output);
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("Yes"),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text("No"),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue),
+                                  )
+                                ],
+                                actionsPadding:
+                                    EdgeInsets.only(right: 15, bottom: 10));
+                          });
                     }
-
                   },
                 ),
               ),

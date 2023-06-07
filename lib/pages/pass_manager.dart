@@ -123,6 +123,9 @@ class _PassManagerState extends State<PassManager> {
       body: Scaffold(
         appBar: AppBar(
           title: Text('Password Manager'),
+          leading: IconButton(icon: Icon(Icons.keyboard_backspace), onPressed: () {
+            Navigator.popUntil(context, ModalRoute.withName("/"));
+          },),
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8),
