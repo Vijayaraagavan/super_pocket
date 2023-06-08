@@ -112,7 +112,11 @@ class _EntryCardState extends State<EntryCard> {
           ),
           CustomPaint(
             painter: LinePainterSide(),
-            child: Container(height: 1), // Adjust the height of the line
+            child: Container(height: 0), // Adjust the height of the line
+          ),
+          CustomPaint(
+            painter: LinePainterDown(),
+            child: Container(height: 0), // Adjust the height of the line
           ),
         ],
       ),
@@ -131,123 +135,33 @@ class _EntryListState extends State<EntryList> {
     gen(1, "I dropped boruto", 2),
     gen(2, "I dropped boruto", 2)
   ];
-  final GlobalKey _listViewKey = GlobalKey();
-
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(
-      children: [
-        CustomPaint(
-          painter: LinePainter(_listViewKey),
-          child: Container(height: 1), // Adjust the height of the line
-        ),
-        () {
-          int itemCount = 3;
-          if (itemCount > 5) {
-            return Expanded(
-              child: ListView.builder(
-                key: _listViewKey,
-                itemCount: itemCount,
-                itemBuilder: (BuildContext context, int index) {
-                  return EntryCard(entries[0]);
-                },
-                // children: entries.map((e) => EntryCard(e)).toList(),
-                //     children: [
-                //       CustomPaint(
-                //         painter: LinePainter(),
-                //         child: Container(height: 50.0), // Adjust the height of the line
-                //       ),
-                //       EntryCard(entries[0]),
-                //       // CustomPaint(
-                //       //   painter: LinePainter(),
-                //       //   child: Container(height: 50.0), // Adjust the height of the line
-                //       // ),
-                //       EntryCard(entries[1]),
-                //       // CustomPaint(
-                //       //   painter: LinePainter(),
-                //       //   child: Container(height: 50.0), // Adjust the height of the line
-                //       // ),
-                //       EntryCard(entries[1]),
-                //       EntryCard(entries[1]),
-                //       EntryCard(entries[1]),
-                //       EntryCard(entries[1]),
-                //       EntryCard(entries[1]),
-                //       EntryCard(entries[1]),
-                //       EntryCard(entries[1]),
-                //
-                //     ]
-              ),
-            );
-          } else {
-            return ListView.builder(
-              key: _listViewKey,
-              shrinkWrap: true,
-              itemCount: itemCount,
-              itemBuilder: (BuildContext context, int index) {
-                return EntryCard(entries[0]);
-              },
-              // children: entries.map((e) => EntryCard(e)).toList(),
-              //     children: [
-              //       CustomPaint(
-              //         painter: LinePainter(),
-              //         child: Container(height: 50.0), // Adjust the height of the line
-              //       ),
-              //       EntryCard(entries[0]),
-              //       // CustomPaint(
-              //       //   painter: LinePainter(),
-              //       //   child: Container(height: 50.0), // Adjust the height of the line
-              //       // ),
-              //       EntryCard(entries[1]),
-              //       // CustomPaint(
-              //       //   painter: LinePainter(),
-              //       //   child: Container(height: 50.0), // Adjust the height of the line
-              //       // ),
-              //       EntryCard(entries[1]),
-              //       EntryCard(entries[1]),
-              //       EntryCard(entries[1]),
-              //       EntryCard(entries[1]),
-              //       EntryCard(entries[1]),
-              //       EntryCard(entries[1]),
-              //       EntryCard(entries[1]),
-              //
-              //     ]
-            );
-          }
-        }(),
+      child: Expanded(
+        child: ListView(
 
-// Text("checking"),
-//             Text("checking 233"),
-      ],
-    ));
+            // children: entries.map((e) => EntryCard(e)).toList(),
+            children: [
+              EntryCard(entries[0]),
+              // CustomPaint(
+              //   painter: LinePainter(),
+              //   child: Container(height: 50.0), // Adjust the height of the line
+              // ),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+              EntryCard(entries[1]),
+            ]),
+      ),
+    );
   }
-}
-
-class LinePainter extends CustomPainter {
-  final GlobalKey listViewKey;
-
-  LinePainter(this.listViewKey);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.orange // Adjust the color of the line
-      ..strokeWidth = 2.0;
-
-    final listViewBox =
-        listViewKey.currentContext?.findRenderObject() as RenderBox?;
-    final startPoint = Offset(size.width / size.width + 20, 45);
-
-    print(listViewBox?.size.height);
-    final endPoint = Offset(
-        size.width / size.width + 20, listViewBox!.size.height - 53 ?? 0);
-    // final endPoint = Offset(size.width / size.width + 20, 4 * 92);
-
-    canvas.drawLine(startPoint, endPoint, paint);
-  }
-
-  @override
-  bool shouldRepaint(LinePainter oldDelegate) => false;
 }
 
 class LinePainterSide extends CustomPainter {
@@ -266,6 +180,24 @@ class LinePainterSide extends CustomPainter {
 
   @override
   bool shouldRepaint(LinePainterSide oldDelegate) => false;
+}
+
+class LinePainterDown extends CustomPainter {
+  LinePainterDown();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.orange // Adjust the color of the line
+      ..strokeWidth = 2.0;
+
+    final startPoint = Offset(20, -45);
+    final endPoint = Offset(20, 55);
+    canvas.drawLine(startPoint, endPoint, paint);
+  }
+
+  @override
+  bool shouldRepaint(LinePainterDown oldDelegate) => false;
 }
 
 Entry gen(id, msg, cat_id) {
