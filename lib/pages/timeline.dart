@@ -56,42 +56,59 @@ class _EntryCardState extends State<EntryCard> {
   // }
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      child: Column(
-        children: [
-          FractionallySizedBox(
-            widthFactor: 0.7,
-            child: Card(
-              color: Theme.of(context).primaryColorLight,
-              // color: Colors.orange[100],
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(12), // Set the desired border radius
-                side: BorderSide(
-                  color: Theme.of(context)
-                      .primaryColorLight, // Set the desired border color
-                  width: 1, // Set the desired border width
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Row(
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 1, // number of children,
+      itemBuilder: (BuildContext context, int index) {
+        return Column(
+          children: [
+            CustomPaint(
+              foregroundPainter: LinePainterSide(),
+              child: Container(
+                child: FractionallySizedBox(
+                  widthFactor: 0.7,
+                  child: Card(
+                    color: Theme.of(context).primaryColorLight,
+                    // color: Colors.orange[100],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          12), // Set the desired border radius
+                      side: BorderSide(
+                        color: Theme.of(context)
+                            .primaryColorLight, // Set the desired border color
+                        width: 1, // Set the desired border width
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            widget.entry.recency,
-                            style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 18),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  widget.entry.recency,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      fontSize: 18),
+                                ),
+                                Spacer(),
+                                Text(
+                                  widget.entry.dateStr,
+                                  style: TextStyle(
+                                      color: Theme.of(context).primaryColor,
+                                      fontSize: 18),
+                                )
+                              ],
+                            ),
                           ),
-                          Spacer(),
+                          Divider(),
                           Text(
-                            widget.entry.dateStr,
+                            widget.entry.message,
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor,
                                 fontSize: 18),
@@ -99,27 +116,18 @@ class _EntryCardState extends State<EntryCard> {
                         ],
                       ),
                     ),
-                    Divider(),
-                    Text(
-                      widget.entry.message,
-                      style: TextStyle(
-                          color: Theme.of(context).primaryColor, fontSize: 18),
-                    )
-                  ],
+                  ),
                 ),
-              ),
+              ), // Adjust the height of the line
             ),
-          ),
-          CustomPaint(
-            painter: LinePainterSide(),
-            child: Container(height: 0), // Adjust the height of the line
-          ),
-          CustomPaint(
-            painter: LinePainterDown(),
-            child: Container(height: 0), // Adjust the height of the line
-          ),
-        ],
-      ),
+            CustomPaint(
+              painter: LinePainterDown(),
+              child: Container(height: 0), // Adjust the height of the line
+            ),
+            SizedBox(height: 10)
+          ],
+        ); // Your child widget here;
+      },
     );
   }
 }
@@ -132,15 +140,18 @@ class EntryList extends StatefulWidget {
 
 class _EntryListState extends State<EntryList> {
   List<Entry> entries = [
-    gen(1, "I dropped boruto", 2),
-    gen(2, "I dropped boruto", 2)
+    gen(1, "I dropped boruto you shit head brign", 2),
+    gen(
+        2,
+        "I dropped boruto you shit head brign it on i madara declare you the tronger in taijustu",
+        2)
   ];
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Expanded(
         child: ListView(
-
+            shrinkWrap: true,
             // children: entries.map((e) => EntryCard(e)).toList(),
             children: [
               EntryCard(entries[0]),
@@ -150,7 +161,7 @@ class _EntryListState extends State<EntryList> {
               // ),
               EntryCard(entries[1]),
               EntryCard(entries[1]),
-              EntryCard(entries[1]),
+              EntryCard(entries[0]),
               EntryCard(entries[1]),
               EntryCard(entries[1]),
               EntryCard(entries[1]),
@@ -173,8 +184,8 @@ class LinePainterSide extends CustomPainter {
       ..color = Colors.orange // Adjust the color of the line
       ..strokeWidth = 2.0;
 
-    final startPoint = Offset(20, -45);
-    final endPoint = Offset(65, -45);
+    final startPoint = Offset(4, size.height / 2);
+    final endPoint = Offset(-40, size.height / 2);
     canvas.drawLine(startPoint, endPoint, paint);
   }
 
@@ -191,8 +202,8 @@ class LinePainterDown extends CustomPainter {
       ..color = Colors.orange // Adjust the color of the line
       ..strokeWidth = 2.0;
 
-    final startPoint = Offset(20, -45);
-    final endPoint = Offset(20, 55);
+    final startPoint = Offset(20, -56);
+    final endPoint = Offset(20, 100);
     canvas.drawLine(startPoint, endPoint, paint);
   }
 
