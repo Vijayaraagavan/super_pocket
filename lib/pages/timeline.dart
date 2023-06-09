@@ -120,10 +120,10 @@ class _EntryCardState extends State<EntryCard> {
                 ),
               ), // Adjust the height of the line
             ),
-            CustomPaint(
-              painter: LinePainterDown(),
-              child: Container(height: 0), // Adjust the height of the line
-            ),
+            // CustomPaint(
+            //   painter: LinePainterDown(),
+            //   child: Container(height: 0), // Adjust the height of the line
+            // ),
             SizedBox(height: 10)
           ],
         ); // Your child widget here;
@@ -154,6 +154,7 @@ class _EntryListState extends State<EntryList> {
             shrinkWrap: true,
             // children: entries.map((e) => EntryCard(e)).toList(),
             children: [
+              SizedBox(height: 20),
               EntryCard(entries[0]),
               // CustomPaint(
               //   painter: LinePainter(),
@@ -182,11 +183,14 @@ class LinePainterSide extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Colors.orange // Adjust the color of the line
-      ..strokeWidth = 2.0;
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke;
 
-    final startPoint = Offset(4, size.height / 2);
-    final endPoint = Offset(-40, size.height / 2);
-    canvas.drawLine(startPoint, endPoint, paint);
+    Path path = Path();
+    path.moveTo(4, size.height / 2);
+    path.lineTo(-40, size.height / 2);
+    path.lineTo(-40, size.height + 100);
+    canvas.drawPath(path, paint);
   }
 
   @override
