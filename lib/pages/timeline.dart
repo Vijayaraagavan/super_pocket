@@ -34,6 +34,7 @@ class Entry {
   String dateStr;
   String message;
   int category_id;
+  bool lastChild = false;
 
   Entry(this.id, this.datetime, this.recency, this.dateStr, this.message,
       this.category_id);
@@ -64,10 +65,12 @@ class _EntryCardState extends State<EntryCard> {
         return Column(
           children: [
             CustomPaint(
-              foregroundPainter: LinePainterSide(),
+              foregroundPainter: widget.entry.lastChild ? LinePainterDown(): LinePainterSide(),
               child: Container(
+                height: 120,
                 child: FractionallySizedBox(
                   widthFactor: 0.7,
+                  heightFactor: 1,
                   child: Card(
                     color: Theme.of(context).primaryColorLight,
                     // color: Colors.orange[100],
@@ -110,8 +113,11 @@ class _EntryCardState extends State<EntryCard> {
                           Text(
                             widget.entry.message,
                             style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 18),
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 18,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            maxLines: 2,
                           )
                         ],
                       ),
@@ -144,7 +150,8 @@ class _EntryListState extends State<EntryList> {
     gen(
         2,
         "I dropped boruto you shit head brign it on i madara declare you the tronger in taijustu",
-        2)
+        2),
+    genLast(3, "I dropped boruto you shit head brign", 3),
   ];
   @override
   Widget build(BuildContext context) {
@@ -161,15 +168,15 @@ class _EntryListState extends State<EntryList> {
               //   child: Container(height: 50.0), // Adjust the height of the line
               // ),
               EntryCard(entries[1]),
-              EntryCard(entries[1]),
-              EntryCard(entries[0]),
-              EntryCard(entries[1]),
+              // EntryCard(entries[1]),
               EntryCard(entries[1]),
               EntryCard(entries[1]),
               EntryCard(entries[1]),
-              EntryCard(entries[1]),
-              EntryCard(entries[1]),
-              EntryCard(entries[1]),
+              EntryCard(entries[2]),
+              // EntryCard(entries[1]),
+              // EntryCard(entries[1]),
+              // EntryCard(entries[1]),
+              // EntryCard(entries[1]),
             ]),
       ),
     );
@@ -189,7 +196,7 @@ class LinePainterSide extends CustomPainter {
     Path path = Path();
     path.moveTo(4, size.height / 2);
     path.lineTo(-40, size.height / 2);
-    path.lineTo(-40, size.height + 100);
+    path.lineTo(-40, size.height * 1.59);
     canvas.drawPath(path, paint);
   }
 
@@ -206,8 +213,8 @@ class LinePainterDown extends CustomPainter {
       ..color = Colors.orange // Adjust the color of the line
       ..strokeWidth = 2.0;
 
-    final startPoint = Offset(20, -56);
-    final endPoint = Offset(20, 100);
+    final startPoint = Offset(4, size.height / 2);
+    final endPoint = Offset(-40, size.height / 2);
     canvas.drawLine(startPoint, endPoint, paint);
   }
 
@@ -219,4 +226,12 @@ Entry gen(id, msg, cat_id) {
   DateTime datetime = DateTime.now();
   var recency = DateFormat.yMMMd().format(DateTime.now());
   return Entry(1, datetime, "Yesterday", recency, msg, cat_id);
+}
+
+Entry genLast(id, msg, cat_id) {
+  DateTime datetime = DateTime.now();
+  var recency = DateFormat.yMMMd().format(DateTime.now());
+  Entry last = Entry(1, datetime, "Yesterday", recency, msg, cat_id);
+  last.lastChild = true;
+  return last;
 }
